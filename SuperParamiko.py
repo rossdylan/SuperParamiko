@@ -1,7 +1,6 @@
 import paramiko
 from functools import partial
 
-
 class SuperParamiko(object):
     """
     usage:
