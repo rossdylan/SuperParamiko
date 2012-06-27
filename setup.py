@@ -10,7 +10,7 @@ requires = [
 setup(name='SuperParamiko',
       version='0.1.0',
       description='Wrapper around paramiko adding pbs style functionality',
-      long_description='Simple wrapper around paramiko which lets you use it kinda like pbs'.
+      long_description='Simple wrapper around paramiko which lets you use it kinda like pbs',
       license="AGPLv3+",
       classifiers=[
         "Programming Language :: Python",
