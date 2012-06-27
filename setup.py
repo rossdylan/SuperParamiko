@@ -1,9 +1,6 @@
-import os
 
 from setuptools import setup
 
-here = os.path.abspath(os.path.dirname(__file__))
-README = open(os.path.join(here, 'README.rst')).read()
 
 
 requires = [
@@ -11,9 +8,9 @@ requires = [
     ]
 
 setup(name='SuperParamiko',
-      version='0.1.1',
+      version='0.1.0',
       description='Wrapper around paramiko adding pbs style functionality',
-      long_description=README,
+      long_description='Simple wrapper around paramiko which lets you use it kinda like pbs'.
       license="AGPLv3+",
       classifiers=[
         "Programming Language :: Python",
