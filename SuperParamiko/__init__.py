@@ -64,13 +64,16 @@ class command(object):
         setattr(self, name, command(name, self.sp, prev=self))
         return getattr(self, name)
 
-    def __call__(self, *args, **kwargs):
+    def cmd_string(self):
         if self.prev == None:
             return self.name
         else:
-            cmd_string = "{0} {1}".format(self.prev(), self.name)
-            cmd_list = cmd_string.split(" ")
-            cmd = cmd_list[0]
-            cmd_list = tuple(cmd_list[1:])
-            args = cmd_list + args
-            return self.sp.ssh_func_wrapper(cmd, *args, **kwargs)
+            return "{0} {1}".format(self.prev.cmd_string(), self.name)
+
+    def __call__(self, *args, **kwargs):
+        cmd_string = self.cmd_string()
+        cmd_list = cmd_string.split(" ")
+        cmd = cmd_list[0]
+        cmd_list = tuple(cmd_list[1:])
+        args = cmd_list + args
+        return self.sp.ssh_func_wrapper(cmd, *args, **kwargs)
