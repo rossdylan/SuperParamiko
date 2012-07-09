@@ -46,9 +46,31 @@ class SuperParamiko(object):
             return map(lambda s: s.strip(), stdout.readlines())
 
     def __getattr__(self, name):
-        return partial(self.ssh_func_wrapper, name)
+        return command(name, self)
 
     def __enter__(self):
         return self
     def __exit__(self, type, value, traceback):
         return
+
+
+class command(object):
+    def __init__(self, name, sp, prev=None):
+        self.sp = sp #SuperParamiko instance used to run command
+        self.name = name
+        self.prev = prev
+
+    def __getattr__(self, name):
+        setattr(self, name, command(name, self.sp, prev=self))
+        return getattr(self, name)
+
+    def __call__(self, *args, **kwargs):
+        if self.prev == None:
+            return self.name
+        else:
+            cmd_string = "{0} {1}".format(self.prev(), self.name)
+            cmd_list = cmd_string.split(" ")
+            cmd = cmd_list[0]
+            cmd_list = tuple(cmd_list[1:])
+            args = cmd_list + args
+            return self.sp.ssh_func_wrapper(cmd, *args, **kwargs)
