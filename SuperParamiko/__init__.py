@@ -27,7 +27,7 @@ class SuperParamiko(object):
             )
 
     def generate_command_string(self, cmd, *args, **kwargs):
-        command = [cmd,]
+        command = [cmd.replace("_","-"),]
         command.extend(list(args))
         for key, arg in kwargs.items():
             if arg == None or arg == "":
