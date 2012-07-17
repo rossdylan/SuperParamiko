@@ -1,0 +1,4 @@
+*.pyc
+SuperParamiko.egg-info/
+build/
+dist/
