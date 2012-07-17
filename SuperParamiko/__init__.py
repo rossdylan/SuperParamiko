@@ -1,5 +1,7 @@
 import paramiko
 from functools import partial
+from string import strip
+
 
 class SuperParamiko(object):
     """
@@ -16,24 +18,24 @@ class SuperParamiko(object):
         self.session = paramiko.SSHClient()
         self.session.set_missing_host_key_policy(
                 paramiko.AutoAddPolicy())
-        if password == None:
-            self.session.connect(host, username=username, port=port)
-        else:
+        if password:
             self.session.connect(
                     host,
                     username=username,
                     password=password,
                     port=port
             )
+        else:
+            self.session.connect(host, username=username, port=port)
 
     def generate_command_string(self, cmd, *args, **kwargs):
-        command = [cmd,]
+        command = [cmd]
         command.extend(list(args))
         for key, arg in kwargs.items():
-            if arg == None or arg == "":
-                command.append("--{0}".format(key))
+            if arg:
+                comment.append("--{0} {1}".format(key, arg))
             else:
-                command.append("--{0} {1}".format(key, arg))
+                command.append("--{0}".format(key))
         return ' '.join(command)
 
     def ssh_func_wrapper(self, cmd, *args, **kwargs):
@@ -43,20 +45,21 @@ class SuperParamiko(object):
         if errors != []:
             raise Exception(errors)
         else:
-            return map(lambda s: s.strip(), stdout.readlines())
+            return map(strip, stdout.readlines())
 
     def __getattr__(self, name):
         return command(name, self)
 
     def __enter__(self):
         return self
+
     def __exit__(self, type, value, traceback):
         return
 
 
 class command(object):
     def __init__(self, name, sp, prev=None):
-        self.sp = sp #SuperParamiko instance used to run command
+        self.sp = sp  # SuperParamiko instance used to run command
         self.name = name
         self.prev = prev
 
@@ -65,10 +68,10 @@ class command(object):
         return getattr(self, name)
 
     def cmd_string(self):
-        if self.prev == None:
-            return self.name
-        else:
+        if self.prev:
             return "{0} {1}".format(self.prev.cmd_string(), self.name)
+        else:
+            return self.name
 
     def __call__(self, *args, **kwargs):
         cmd_string = self.cmd_string()
